@@ -1,13 +1,21 @@
 import express from "express";
-import { isEmptyBody, passport } from "../../middleware/index.js";
+import {
+  authenticate,
+  isEmptyBody,
+  passportGoogle,
+  upload,
+} from "../../middleware/index.js";
 import {
   googleAuth,
   register,
   veriFyEmailRepeat,
   verifyEmail,
+  login,
+  logout,
 } from "../../controllers/auth-controller/index.js";
 import { validateBody, ctrlWrapper } from "../../decorators/index.js";
 import {
+  loginJoiSchema,
   registerJoiSchema,
   verifyEmailRepeatSchema,
 } from "../../models/User.js";
@@ -16,6 +24,7 @@ const authRouter = express.Router();
 
 authRouter.post(
   "/register",
+  upload.single("avatar"),
   isEmptyBody,
   validateBody(registerJoiSchema),
   ctrlWrapper(register)
@@ -31,13 +40,22 @@ authRouter.post(
 
 authRouter.get(
   "/google",
-  passport.authenticate("google", { scope: ["email", "profile"] })
+  passportGoogle.authenticate("google", { scope: ["email", "profile"] })
 );
 
 authRouter.get(
   "/google-redirect",
-  passport.authenticate("google", { session: false }),
+  passportGoogle.authenticate("google", { session: false }),
   ctrlWrapper(googleAuth)
 );
+
+authRouter.post(
+  "/login",
+  isEmptyBody,
+  validateBody(loginJoiSchema),
+  ctrlWrapper(login)
+);
+
+authRouter.post("/logout", authenticate, ctrlWrapper(logout));
 
 export default authRouter;

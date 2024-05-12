@@ -3,6 +3,7 @@ import passport from "passport";
 import { nanoid } from "nanoid";
 import bcryptjs from "bcryptjs";
 import User from "../models/User.js";
+import "dotenv/config";
 
 const { GOOGLE_CLIENT_SECRET, GOOGLE_CLIENT_ID, BACKEND_URL } = process.env;
 
@@ -32,7 +33,6 @@ const googleCallback = async (
       username: displayName,
       password,
       verify: true,
-      verifyCode: "",
     });
     done(null, newUser);
   } catch (error) {

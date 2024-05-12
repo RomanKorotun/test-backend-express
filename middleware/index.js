@@ -1,2 +1,4 @@
 export { default as isEmptyBody } from "./isEmptyBody.js";
-export { default as passport } from "./passport.js";
+export { default as passportGoogle } from "./passportGoogle.js";
+export { default as authenticate } from "./authenticate.js";
+export { default as upload } from "./upload.js";
