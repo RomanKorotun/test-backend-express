@@ -12,18 +12,23 @@ const register = async (req, res) => {
     const { email, password, username } = req.body;
     const user = await User.findOne({ email });
     if (user) {
-      throw HttpError(409, "user with this email is already in the database");
+      throw HttpError(409, "User with this email is already in the database");
     }
     const hashPassword = await bcryptjs.hash(password, 10);
     const verifyCode = nanoid();
 
-    const { url: avatar } = await cloudinary.uploader.upload(req.file.path, {
-      folder: "avatars_test_backend_express",
-      use_filename: true,
-      unique_filename: false,
-    });
+    let avatar =
+      "https://res.cloudinary.com/drqeo1pu5/image/upload/v1715592762/avatars_test_backend_express/default_avatar_uvyyfd.png";
 
-    await fs.unlink(req.file.path);
+    if (req.file) {
+      const { url } = await cloudinary.uploader.upload(req.file.path, {
+        folder: "avatars_test_backend_express",
+        use_filename: true,
+        unique_filename: false,
+      });
+      avatar = url;
+      await fs.unlink(req.file.path);
+    }
 
     const newUser = await User.create({
       username,
@@ -32,6 +37,7 @@ const register = async (req, res) => {
       password: hashPassword,
       verifyCode,
     });
+    console.log(newUser);
     const verifyEmail = {
       to: email,
       subject: "Verify email",
@@ -40,6 +46,7 @@ const register = async (req, res) => {
     await sendEmail(verifyEmail);
     res.status(201).json({
       username: newUser.username,
+      avatar: newUser.avatar,
       email: newUser.email,
     });
   } catch (error) {

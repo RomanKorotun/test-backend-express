@@ -12,11 +12,16 @@ import {
   verifyEmail,
   login,
   logout,
+  updateUser,
+  current,
+  refresch,
 } from "../../controllers/auth-controller/index.js";
 import { validateBody, ctrlWrapper } from "../../decorators/index.js";
 import {
   loginJoiSchema,
+  refreschTokenJoiSchema,
   registerJoiSchema,
+  updateUserJoiSchema,
   verifyEmailRepeatSchema,
 } from "../../models/User.js";
 
@@ -54,6 +59,24 @@ authRouter.post(
   isEmptyBody,
   validateBody(loginJoiSchema),
   ctrlWrapper(login)
+);
+
+authRouter.put(
+  "/users",
+  authenticate,
+  upload.single("avatar"),
+  isEmptyBody,
+  validateBody(updateUserJoiSchema),
+  ctrlWrapper(updateUser)
+);
+
+authRouter.get("/current", authenticate, ctrlWrapper(current));
+
+authRouter.post(
+  "/refresch",
+  isEmptyBody,
+  validateBody(refreschTokenJoiSchema),
+  ctrlWrapper(refresch)
 );
 
 authRouter.post("/logout", authenticate, ctrlWrapper(logout));

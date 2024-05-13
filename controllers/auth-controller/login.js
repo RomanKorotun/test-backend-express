@@ -2,7 +2,7 @@ import { HttpError } from "../../helpers/index.js";
 import User from "../../models/User.js";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
-import "dotenv/config"
+import "dotenv/config";
 
 const {
   JWT_ACCESS_TOKEN_SECRET,
@@ -39,6 +39,7 @@ const login = async (req, res) => {
 
   res.json({
     username: user.username,
+    avatar: user.avatar,
     email: user.email,
     accessToken,
     refreschToken,
