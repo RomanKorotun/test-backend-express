@@ -11,6 +11,7 @@ const register = async (req, res) => {
   try {
     const { email, password, username } = req.body;
     const user = await User.findOne({ email });
+
     if (user) {
       throw HttpError(409, "User with this email is already in the database");
     }
@@ -37,7 +38,7 @@ const register = async (req, res) => {
       password: hashPassword,
       verifyCode,
     });
-    console.log(newUser);
+
     const verifyEmail = {
       to: email,
       subject: "Verify email",
@@ -50,7 +51,9 @@ const register = async (req, res) => {
       email: newUser.email,
     });
   } catch (error) {
-    await fs.unlink(req.file.path);
+    if (req.file) {
+      await fs.unlink(req.file.path);
+    }
     throw error;
   }
 };

@@ -146,7 +146,9 @@ const updateUser = async (req, res) => {
     }
     //========================================/7=========================
   } catch (error) {
-    await fs.unlink(req.file.path);
+    if (req.file) {
+      await fs.unlink(req.file.path);
+    }
     throw error;
   }
 };
